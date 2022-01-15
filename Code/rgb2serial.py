@@ -1,3 +1,5 @@
+# Author: Blake Freer
+# Date: January 15, 2022
 # Convert RGB, fade, repeat and duration into a 32 bit strong for the Arduino
 
 def clamp(x, lower, upper):
@@ -44,6 +46,10 @@ def createPacket(red, green, blue, fade, repeat, duration):
 
     return (byte1, byte2, byte3, byte4)
 
-while True:
-    dur = 10*int(input("\n\nEnter duration in ms: "))
-    createPacket(255,255,255,0,0,dur)
+
+
+if __name__ == "main":
+    # for testing only, won't be imported
+    while True:
+        dur = 10*int(input("\n\nEnter duration in ms: "))
+        createPacket(255,255,255,0,0,dur)
