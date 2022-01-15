@@ -48,7 +48,7 @@ def createPacket(red, green, blue, fade, repeat, duration):
 
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     # for testing only, won't be imported
     while True:
         dur = 10*int(input("\n\nEnter duration in ms: "))
