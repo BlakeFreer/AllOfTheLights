@@ -1,2 +1,4 @@
 *.stl
-/pychache
+*.lck
+Code/__pycache__/
+Models/OldVersions/
