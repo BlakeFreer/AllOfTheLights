@@ -11,8 +11,10 @@ def patternToPackets(patternName):
         "fade3" : [createPacket(255, 0, 0, 0, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000), createPacket(0, 0, 255, 0, 0, 1000)],
         "fade7" : [createPacket(255, 0, 0, 1, 0, 1000), createPacket(0, 255, 0, 1, 0, 1000), createPacket(255, 0, 255, 1, 0, 1000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000), createPacket(255, 50, 0, 1, 0, 1000), createPacket(0, 255, 255, 1, 0, 1000)],
         "pomodoro" : [createPacket(255, 255, 0, 0, 0, 4000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000)],
-        "blueorange" : [createPacket(255, 50, 0, 0, 0, )]
+        "blueorange" : [createPacket(255, 50, 0, 0, 0, 1000), createPacket(255, 50, 0, 1, 0, 1000), createPacket(0, 0, 255, 0, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000)]
     }
+
+    return patterns[patternName]
 
 
 def clamp(x, lower, upper):
@@ -63,6 +65,9 @@ def createPacket(red, green, blue, fade, repeat, duration):
 
     return bytes([byte1, byte2, byte3, byte4])
 
+
+def test():
+    print("hello")
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ from _thread import *
 import time
 import requests
 import json
+import rgb2serial
 
 serverSocket = socket.socket()  #Creates a socket object
 host = '192.168.0.62'           #Server ID (IP of PC/Server)
@@ -76,4 +77,6 @@ def main():
     addClient()                             #Runs the addClient function
     serverSocket.close()                    #Closes the socket when terminated
 
-main()
+if __name__ == "__main__":
+    rgb2serial.test()
+    main()
