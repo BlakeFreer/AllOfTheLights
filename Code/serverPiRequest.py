@@ -8,15 +8,17 @@ import time
 import requests
 import json
 import rgb2serial
+import serial
 
 serverSocket = socket.socket()  #Creates a socket object
-host = '192.168.0.62'           #Server ID (IP of PC/Server)
+host = '192.168.0.78'           #Server ID (IP of PC/Server)
 port = 12345                    #Port number
 myClients = []                  #Declares an empty list to store each client object connected
 
 firstRun = True
 response = {}
 lastResponse = {}
+
 
 def decodeText(message):                        #Function to decode message from server
     decodedMessage = message.decode('utf-8')    #Decodes the encoded message
@@ -39,16 +41,18 @@ def threadedWeb(connection):
     global firstRun
     global response
     global lastResponse
+    global ser
     while True:
         response = requests.get("http://192.168.0.35:5000/query").json()
         if(firstRun):
             firstRun = False
             lastResponse = response
-            sendText(str(response))
+            sendText(response["pattern"])
 
         if(response != lastResponse):
-            sendText(str(response))
-        print(response == lastResponse)
+            sendText(response["pattern"])
+            for byte in rgb2serial.patternToPackets(response["pattern"]):
+                ser.write(byte)
         lastResponse = response;
         time.sleep(1)
 
@@ -67,6 +71,8 @@ def addClient():                                                           #Func
         myClients.append(client)                                           #Adds the client object to a global list of clients
 
 def main():
+    global ser
+    ser = serial.Serial('/dev/ttyAMA0', 9600)
     try:                                    #Initializes the server socket with host IP and port (requires a tuple)
         serverSocket.bind((host, port))
     except socket.error as e:               #Handles an error and prints it if required

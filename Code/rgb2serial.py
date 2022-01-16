@@ -8,12 +8,16 @@ def patternToPackets(patternName):
         "black" : [createPacket(0, 0, 0, 0, 0, 10000)],
         "jump3" : [createPacket(255, 0, 0, 0, 0, 500), createPacket(0, 255, 0, 0, 0, 500), createPacket(0, 0, 255, 0, 0, 500)],
         "jump7" : [createPacket(255, 0, 0, 0, 0, 500), createPacket(0, 255, 0, 0, 0, 500), createPacket(255, 0, 255, 0, 0,500), createPacket(255, 255, 0, 0, 0,500), createPacket(0, 0, 255, 0, 0, 500), createPacket(255, 50, 0, 0, 0, 500), createPacket(0, 255, 255, 0, 0, 500)],
-        "fade3" : [createPacket(255, 0, 0, 0, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000), createPacket(0, 0, 255, 0, 0, 1000)],
+        "fade3" : [createPacket(255, 0, 0, 1, 0, 1000), createPacket(0, 255, 0, 1, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000)],
         "fade7" : [createPacket(255, 0, 0, 1, 0, 1000), createPacket(0, 255, 0, 1, 0, 1000), createPacket(255, 0, 255, 1, 0, 1000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000), createPacket(255, 50, 0, 1, 0, 1000), createPacket(0, 255, 255, 1, 0, 1000)],
-        "pomodoro" : [createPacket(255, 255, 0, 0, 0, 4000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000)],
+        "pomodoro" : [createPacket(255, 0, 0, 0, 0, 8000), createPacket(255, 0, 0, 1, 0, 2000), createPacket(0, 255, 0, 0, 0, 2000)],
         "blueorange" : [createPacket(255, 50, 0, 0, 0, 1000), createPacket(255, 50, 0, 1, 0, 1000), createPacket(0, 0, 255, 0, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000)]
     }
 
+    if not(patternName in patterns.keys()):
+        print("invalid pattern:",patternName)
+        return [0]
+    
     return patterns[patternName]
 
 
@@ -63,7 +67,7 @@ def createPacket(red, green, blue, fade, repeat, duration):
     # print("Duration binary: {:05b} {:04b}".format(base, exp))
     # print("{{0b{:08b},0b{:08b},0b{:08b},0b{:08b}}}".format(byte1, byte2, byte3, byte4))
 
-    return bytes([byte1, byte2, byte3, byte4])
+    return bytearray([byte1, byte2, byte3, byte4])
 
 def test():
     print("hello")
