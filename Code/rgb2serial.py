@@ -34,7 +34,7 @@ def createPacket(red, green, blue, fade, repeat, duration):
     repeat = int(fade >= 1)
     duration = max(duration, 10)    # duration >= 10
 
-    print("Fade:",fade)
+    # print("Fade:",fade)
 
     # create a 32 bit binary packet
     byte1 = ((red >> 1) << 1) + fade
@@ -57,18 +57,16 @@ def createPacket(red, green, blue, fade, repeat, duration):
     byte3 += base >> 4
     byte4 = ((base & 0b1111) << 4) + (exp & 0b1111)
 
-    print(str(duration // 10)+ " ~ (" + str(base) + "+1)*2^" + str(exp) + " = " + str((base+1) * 2 ** exp))
+    # print(str(duration // 10)+ " ~ (" + str(base) + "+1)*2^" + str(exp) + " = " + str((base+1) * 2 ** exp))
     # print("Base = {:08b}+1 = {}".format(base, base+1))
     # print("Exp = {:08b} = {}".format(exp, exp))
     # print("Duration binary: {:05b} {:04b}".format(base, exp))
-    print("{{0b{:08b},0b{:08b},0b{:08b},0b{:08b}}}".format(byte1, byte2, byte3, byte4))
+    # print("{{0b{:08b},0b{:08b},0b{:08b},0b{:08b}}}".format(byte1, byte2, byte3, byte4))
 
     return bytes([byte1, byte2, byte3, byte4])
 
-
 def test():
     print("hello")
-
 
 if __name__ == "__main__":
     # for testing only, won't be imported
