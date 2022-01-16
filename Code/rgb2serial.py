@@ -2,6 +2,19 @@
 # Date: January 15, 2022
 # Convert RGB, fade, repeat and duration into a 32 bit strong for the Arduino
 
+def patternToPackets(patternName):
+    patterns = {
+        "white" : [createPacket(255, 255, 255, 0, 0, 10000)],
+        "black" : [createPacket(0, 0, 0, 0, 0, 10000)],
+        "jump3" : [createPacket(255, 0, 0, 0, 0, 500), createPacket(0, 255, 0, 0, 0, 500), createPacket(0, 0, 255, 0, 0, 500)],
+        "jump7" : [createPacket(255, 0, 0, 0, 0, 500), createPacket(0, 255, 0, 0, 0, 500), createPacket(255, 0, 255, 0, 0,500), createPacket(255, 255, 0, 0, 0,500), createPacket(0, 0, 255, 0, 0, 500), createPacket(255, 50, 0, 0, 0, 500), createPacket(0, 255, 255, 0, 0, 500)],
+        "fade3" : [createPacket(255, 0, 0, 0, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000), createPacket(0, 0, 255, 0, 0, 1000)],
+        "fade7" : [createPacket(255, 0, 0, 1, 0, 1000), createPacket(0, 255, 0, 1, 0, 1000), createPacket(255, 0, 255, 1, 0, 1000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 0, 255, 1, 0, 1000), createPacket(255, 50, 0, 1, 0, 1000), createPacket(0, 255, 255, 1, 0, 1000)],
+        "pomodoro" : [createPacket(255, 255, 0, 0, 0, 4000), createPacket(255, 255, 0, 1, 0, 1000), createPacket(0, 255, 0, 0, 0, 1000)],
+        "blueorange" : [createPacket(255, 50, 0, 0, 0, )]
+    }
+
+
 def clamp(x, lower, upper):
     # restrict a number to be within a range
     return max(lower, min(x, upper))
@@ -48,7 +61,7 @@ def createPacket(red, green, blue, fade, repeat, duration):
     # print("Duration binary: {:05b} {:04b}".format(base, exp))
     print("{{0b{:08b},0b{:08b},0b{:08b},0b{:08b}}}".format(byte1, byte2, byte3, byte4))
 
-    return (byte1, byte2, byte3, byte4)
+    return bytes([byte1, byte2, byte3, byte4])
 
 
 
