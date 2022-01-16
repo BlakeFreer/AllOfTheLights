@@ -42,7 +42,7 @@ def createPacket(red, green, blue, fade, repeat, duration):
     # print("Base = {:08b}+1 = {}".format(base, base+1))
     # print("Exp = {:08b} = {}".format(exp, exp))
     # print("Duration binary: {:05b} {:04b}".format(base, exp))
-    print("{:08b} {:08b} {:08b} {:08b}".format(byte1, byte2, byte3, byte4))
+    print("{{0b{:08b},0b{:08b},0b{:08b},0b{:08b}}}".format(byte1, byte2, byte3, byte4))
 
     return (byte1, byte2, byte3, byte4)
 
@@ -51,5 +51,8 @@ def createPacket(red, green, blue, fade, repeat, duration):
 if __name__ == "__main__":
     # for testing only, won't be imported
     while True:
-        dur = 10*int(input("\n\nEnter duration in ms: "))
-        createPacket(255,255,255,0,0,dur)
+        r = int(input("R: "))
+        g = int(input("G: "))
+        b = int(input("B: "))
+        dur = int(input("Enter duration in ms: "))
+        createPacket(r,g,b,0,0,dur)
