@@ -19,10 +19,14 @@ def createPacket(red, green, blue, fade, repeat, duration):
     repeat = int(fade >= 1)
     duration = max(duration, 10)    # duration >= 10
 
+    print("Fade:",fade)
+
     # create a 32 bit binary packet
-    byte1 = (red >> 1) << 1 + fade
-    byte2 = (green >> 1) << 1 + repeat
-    byte3 = (blue >> 1) << 1
+    byte1 = ((red >> 1) << 1) + fade
+    byte2 = ((green >> 1) << 1) + repeat
+    byte3 = ((blue >> 1) << 1)
+
+    # print("Red, Fade = {:08b}".format(byte1))
 
     # convert duration into custom floating point int
     exp = 0
@@ -50,9 +54,16 @@ def createPacket(red, green, blue, fade, repeat, duration):
 
 if __name__ == "__main__":
     # for testing only, won't be imported
-    while True:
-        r = int(input("R: "))
-        g = int(input("G: "))
-        b = int(input("B: "))
-        dur = int(input("Enter duration in ms: "))
-        createPacket(r,g,b,0,0,dur)
+    
+    createPacket(255,0,0,1,1,1000)
+    createPacket(0,255,0,1,1,1000)
+    createPacket(0,0,255,0,1,500)
+    createPacket(255,255,255,0,1,500)
+
+    createPacket(255,255,255,0,1,20000000)
+    # while True:
+    #     r = int(input("R: "))
+    #     g = int(input("G: "))
+    #     b = int(input("B: "))
+    #     dur = int(input("Enter duration in ms: "))
+    #     createPacket(r,g,b,0,0,dur)

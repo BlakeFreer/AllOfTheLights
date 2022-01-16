@@ -15,10 +15,10 @@ typedef unsigned long ul;
 
 typedef struct patternElement Element;
 struct patternElement {
-    char r;
-    char g;
-    char b;
-    char dur;
+    byte r;
+    byte g;
+    byte b;
+    byte dur;
 };
 
 bool fade(Element* e) {
@@ -35,12 +35,15 @@ ul duration(Element* e) {
     // While the exponent is the last 4 bits of duration
     // Represents an integer in form m * b^e, 1 <= m <= 32, 0 <= e <= 15 to be multiplied by some base unit of duration ex. 10 ms
 
-    ul base = (((e->b) & 1) << 4) + ((e->dur) >> 4) + 1; // +1 changes range from 0->31 to 1->32
+    ul base = (((e->b) & 1) * 16) + ((e->dur) >> 4) + 1; // +1 changes range from 0->31 to 1->32
+    byte bl = e->b;
+//    Serial.print("BLUE: "); Serial.println(bl, BIN);
     ul exponent = (e->dur) & 0b1111;
-    return base << exponent;
+//    Serial.print("DUR: "); Serial.println(e->dur, DEC);
+    return (base << exponent) * DELAY_UNIT;
 }
 
-void interpolateRGB(char r1, char g1, char b1, char r2, char g2, char b2, char t){
+void interpolateRGB(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2, byte t){
     // Interpolate between two RGB values according to t
     // Used for fading between colours
     // t=0 => (r1, g1, b1), t=255 => (r2, g2, b2)
@@ -58,59 +61,64 @@ void setRGB(Element* e){
 
 
 patternElement elements[16]; // a pattern can be up to 16 elements long
-//elements[0] = {0b11111110,0b00000000,0b00000001,0b10000001};
-//elements[1] = {0b00000000,0b11111110,0b00000001,0b00110000};
-//elements[2] = {0b00000000,0b00000000,0b11111111,0b10000010};
-char patternLength = 3; // How many elements are in the pattern?
+byte patternLength; // How many elements are in the pattern?
 
 // Pattern Control Variables
-int curElement = 0;
+int curElementIndex = 0;
+Element* curElement;
 ul nextChange = 0;  // Change to next pattern element when millis() passes this value
+ul fadeStart = 0;   // Start fading (if applicable) when this time is reached
 
 SoftwareSerial serial(RX, 0); // TX is unused
 
 void setup() {
-    
-    elements[0] = {0xFF, 0xFF, 0xFF, 0xFF}; // Default / bootup colour is white
+
+    elements[0] = {0b11111110,0b11111110,0b11111111,0b11111111};
+        
+    patternLength = 1;
     serial.begin(9600);
     
     pinMode(RED, OUTPUT);
     pinMode(GREEN, OUTPUT);
     pinMode(BLUE, OUTPUT);
     
-    setRGB(elements[0]);
-    nextChange = millis() + duration(elements[0]) * DELAY_UNIT;
+    curElementIndex = -1;
+    nextChange = 0;
 }
 
 void loop() {
     if(serial.available() > 0){
         patternLength = 0;
-        curElement = 0;
-        while(Serial.available() > 0){
-            elements[patternLength] = {Serial.read(), Serial.read(), Serial.read(), Serial.read()};
-            Element* e = elements[patternLength];
+        while(serial.available() > 0){
+            // Read in bytes. Ensure that the next byte has arrived before trying to read it
+            elements[patternLength].r = serial.read(); while(serial.available() == 0) delay(1);
+            elements[patternLength].g = serial.read(); while(serial.available() == 0) delay(1);
+            elements[patternLength].b = serial.read(); while(serial.available() == 0) delay(1);
+            elements[patternLength].dur = serial.read(); delay(5); // Delay at end to ensure no more bytes are incoming
+            
             patternLength++;
-//            Serial.print("Red: ");
-//            Serial.println(e->r, DEC);
-//            Serial.print("Green: ");
-//            Serial.println(e->g, DEC);
-//            Serial.print("Blue: ");
-//            Serial.println(e->b, DEC);
-//            Serial.print("Fade: ");
-//            Serial.println(fade(e), DEC);
-//            Serial.print("Repeat: ");
-//            Serial.println(repeat(e), DEC);
-//            Serial.print("Duration (ms): ");
-//            Serial.println(duration(e) * DELAY_UNIT);
-//            Serial.println("*************");
+            if(patternLength >= 16) break; // There are only 16 element spaces so cut off at 16
         }
+        nextChange = millis(); // Change immediately upon receving new instruction
+        curElementIndex = -1; // Will become 0 (first element) immediately after this
     }
     if(millis() > nextChange){
-        curElement++;
-        curElement %= patternLength;
-        setRGB(elements[curElement]);
-        nextChange = nextChange + duration(elements[curElement]) * DELAY_UNIT;
+        curElementIndex++;
+        curElementIndex %= patternLength;
+        curElement = &elements[curElementIndex];
+        setRGB(curElement);
+        nextChange = nextChange + duration(curElement);
+        fadeStart = nextChange - (duration(curElement) >> 1); // Fade will be the last 1/2 of the duration (if applicable)
     }
-    delay(DELAY_UNIT >> 1);
+    if(fade(curElement)){
+        if(millis() > fadeStart){
+            // Fade between current colour and next
+            // use map() to convert range [fadeStart < millis < nextChange] to [0 < t < 255]
+            Element* nextElement = &elements[(curElementIndex + 1) % patternLength];
+            // Use interpolate to set RGB pin outputs
+            interpolateRGB(curElement->r, curElement->g, curElement->b, nextElement->r, nextElement->g, nextElement->b, map(millis(), fadeStart, nextChange, 0, 255));
+        }
+    }
+    delay(5);
     
 }
