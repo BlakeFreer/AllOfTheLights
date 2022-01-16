@@ -1,0 +1,30 @@
+.center {
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.col {
+  margin: 0;
+  padding: 0 0;
+  width: 1rem;
+}
+
+select {
+  width: 25rem;
+  margin: auto;
+}
+
+button {
+  margin: auto;
+}
