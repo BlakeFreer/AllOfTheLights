@@ -1,5 +1,5 @@
 # AllOfTheLights
-DeltaHacks 8 Project (and beyond)
+DeltaHacks 8 Project
 ## Video
 Read more about the project on its [Devpost page](https://devpost.com/software/all-of-the-lights-b31saz)
 
